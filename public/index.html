@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz and Flashcard Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .form-container, .flashcard-container, .question-container, .score-container {
+            display: none;
+        }
+        .option-button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+        }
+        .flashcard {
+            width: 100%;
+            height: 200px;
+            perspective: 1000px;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flip .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz and Flashcard Generator</h1>
+        <button class="option-button" onclick="showForm('quiz')">Generate Quiz</button>
+        <button class="option-button" onclick="showForm('flashcards')">Generate Flashcards</button>
+        <div id="quiz-form-container" class="form-container">
+            <form id="quiz-form">
+                <label for="topic">Topic:</label>
+                <input type="text" id="topic" name="topic" required><br><br>
+                <label for="number">Number of Questions:</label>
+                <input type="number" id="number" name="number" required><br><br>
+                <button type="submit" class="option-button">Generate Quiz</button>
+            </form>
+        </div>
+        <div id="flashcard-form-container" class="form-container">
+            <form id="flashcard-form">
+                <label for="topic-flashcards">Topic:</label>
+                <input type="text" id="topic-flashcards" name="topic-flashcards" required><br><br>
+                <label for="number-flashcards">Number of Flashcards:</label>
+                <input type="number" id="number-flashcards" name="number-flashcards" required><br><br>
+                <button type="submit" class="option-button">Generate Flashcards</button>
+            </form>
+        </div>
+        <div id="question-container" class="question-container">
+            <h2 id="quiz-title"></h2>
+            <form id="question-form">
+                <div id="question"></div>
+                <div id="options"></div>
+                <button type="button" id="previous-btn" class="option-button">Previous</button>
+                <button type="submit" class="option-button">Next</button>
+            </form>
+        </div>
+        <div id="flashcard-container" class="flashcard-container">
+            <h2 id="flashcard-title"></h2>
+            <div id="flashcards"></div>
+            <button onclick="restartFlashcards()" class="option-button">Restart Flashcards</button>
+        </div>
+        <div id="score-container" class="score-container">
+            <h2>Quiz Completed!</h2>
+            <p id="score"></p>
+            <button onclick="restartQuiz()" class="option-button">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let questions = [];
+        let score = 0;
+        let selectedOptions = []; // Array to store selected options for each question
+        let flashcards = [];
+        let currentFlashcardIndex = 0;
+
+        function showForm(type) {
+            document.querySelectorAll('.form-container').forEach(form => form.style.display = 'none');
+            if (type === 'quiz') {
+                document.getElementById('quiz-form-container').style.display = 'block';
+            } else if (type === 'flashcards') {
+                document.getElementById('flashcard-form-container').style.display = 'block';
+            }
+        }
+
+        document.getElementById('quiz-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const topic = document.getElementById('topic').value;
+            const number = document.getElementById('number').value;
+            
+            const response = await fetch('/generate-quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, number })
+            });
+
+            const quiz = await response.json();
+            questions = quiz.questions;
+            selectedOptions = new Array(questions.length).fill(null); // Initialize selectedOptions array
+
+            document.getElementById('quiz-title').innerText = quiz.title;
+            document.getElementById('quiz-form-container').style.display = 'none';
+            document.getElementById('question-container').style.display = 'block';
+            showQuestion();
+        });
+
+        document.getElementById('flashcard-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const topic = document.getElementById('topic-flashcards').value;
+            const number = document.getElementById('number-flashcards').value;
+            
+            const response = await fetch('/generate-flashcards', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, number })
+            });
+
+            const flashcardsData = await response.json();
+            flashcards = flashcardsData.flashcards;
+
+            document.getElementById('flashcard-title').innerText = flashcardsData.title;
+            document.getElementById('flashcard-form-container').style.display = 'none';
+            document.getElementById('flashcard-container').style.display = 'block';
+            showFlashcard();
+        });
+
+        document.getElementById('question-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (selectedOption) {
+                const answer = selectedOption.value;
+                selectedOptions[currentQuestionIndex] = answer; // Store selected option
+
+                if (answer === questions[currentQuestionIndex].answer) {
+                    score++;
+                }
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion();
+                } else {
+                    showScore();
+                }
+            } else {
+                alert('Please select an option');
+            }
+        });
+
+        document.getElementById('previous-btn').addEventListener('click', function(event) {
+            event.preventDefault();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        });
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question').innerText = question.question;
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.innerHTML = `
+                    <input type="radio" id="${option}" name="option" value="${option}" ${selectedOptions[currentQuestionIndex] === option ? 'checked' : ''}>
+                    <label for="${option}">${option}</label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function showFlashcard() {
+            const flashcard = flashcards[currentFlashcardIndex];
+            document.getElementById('flashcards').innerHTML = `
+                <div class="flashcard" onclick="flipFlashcard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <strong>Term:</strong> ${flashcard.term}
+                        </div>
+                        <div class="flashcard-back">
+                            <strong>Definition:</strong> ${flashcard.definition}
+                        </div>
+                    </div>
+                </div>
+                <button ${currentFlashcardIndex === 0 ? 'disabled' : ''} onclick="prevFlashcard()">Previous</button>
+                <button ${currentFlashcardIndex === flashcards.length - 1 ? 'disabled' : ''} onclick="nextFlashcard()">Next</button>
+            `;
+        }
+
+        function flipFlashcard(element) {
+            element.classList.toggle('flip');
+        }
+
+        function nextFlashcard() {
+            if (currentFlashcardIndex < flashcards.length - 1) {
+                currentFlashcardIndex++;
+                showFlashcard();
+            }
+        }
+
+        function prevFlashcard() {
+            if (currentFlashcardIndex > 0) {
+                currentFlashcardIndex--;
+                showFlashcard();
+            }
+        }
+
+        function showScore() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('score-container').style.display = 'block';
+            document.getElementById('score').innerText = `Your score: ${score} / ${questions.length}`;
+        }
+
+        function restartQuiz() {
+            document.getElementById('score-container').style.display = 'none';
+            document.getElementById('quiz-form-container').style.display = 'block';
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedOptions = [];
+        }
+
+        function restartFlashcards() {
+            document.getElementById('flashcard-container').style.display = 'none';
+            document.getElementById('flashcard-form-container').style.display = 'block';
+            currentFlashcardIndex = 0;
+        }
+    </script>
+</body>
+</html>
