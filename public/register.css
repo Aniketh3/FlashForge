@@ -1,0 +1,101 @@
+body {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0; /* Light background */
+    font-family: Arial, sans-serif;
+  }
+  
+  .main-heading {
+    margin-top: 100px; /* Space from the top */
+    margin-bottom: 100px; /* Space below the heading */
+    color: #2196F3; /* Blue color */
+    font-size: 3em; /* Large font size */
+    text-align: center; /* Center the main heading */
+  }
+  
+  .container {
+    display: flex; /* Use flexbox for the container */
+    align-items: center; /* Center the content vertically */
+    width: 80%; /* Adjust width as needed */
+    max-width: 1100px; /* Set a maximum width */
+  }
+  
+  .content {
+    text-align: center;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Make the content container take up available space */
+  }
+  
+  .content h1 {
+    margin-bottom: 30px;
+    color: #2196F3; /* Blue color */
+    font-size: 3em; /* Large font size */
+  }
+  
+  #register-form {
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
+    width: 100%; /* Form takes full width of container */
+  }
+  
+  #register-form div {
+    margin-bottom: 15px; /* Space between form elements */
+  }
+  
+  label {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: 100%; /* Inputs take full width of form */
+  }
+  
+  button[type="submit"] {
+    background-color: #2196F3; /* Blue color */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Button takes full width of form */
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #1976D2; /* Darker blue on hover */
+  }
+  
+  p {
+    margin-top: 20px;
+  }
+  
+  a {
+    color: #2196F3; /* Blue color */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  .intro {
+    width: 500px; /* Adjust width as needed */
+    margin-right: 50px; /* Add margin to the right */
+  }
+  
+  .intro img {
+    width: 100%; /* Make the image responsive to the container width */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
