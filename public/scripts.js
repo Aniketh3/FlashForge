@@ -292,13 +292,15 @@ function showQuestion() {
 
     question.options.forEach(option => {
         const optionElement = document.createElement('div');
+        optionElement.className = 'option-container';
         optionElement.innerHTML = `
             <input type="radio" id="${option}" name="option" value="${option}" ${selectedOptions[currentQuestionIndex] === option ? 'checked' : ''}>
-            <label for="${option}">${option}</label>
+            <label class="option-label" for="${option}">${option}</label>
         `;
         optionsContainer.appendChild(optionElement);
     });
 }
+
 
 function showFlashcard() {
     const flashcard = flashcards[currentFlashcardIndex];
@@ -313,8 +315,8 @@ function showFlashcard() {
                 </div>
             </div>
         </div>
-        <button ${currentFlashcardIndex === 0 ? 'disabled' : ''} onclick="prevFlashcard()">Previous</button>
-        <button ${currentFlashcardIndex === flashcards.length - 1 ? 'disabled' : ''} onclick="nextFlashcard()">Next</button>
+        <button ${currentFlashcardIndex === 0 ? 'disabled' : ''} onclick="prevFlashcard()" class="option-button">Previous</button>
+        <button ${currentFlashcardIndex === flashcards.length - 1 ? 'disabled' : ''} onclick="nextFlashcard()" class="option-button">Next</button>
     `;
 }
 

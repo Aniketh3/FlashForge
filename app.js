@@ -1,6 +1,3 @@
-
-
-
 const bodyParser = require('body-parser');
 const OpenAI = require('openai');
 const path = require('path');

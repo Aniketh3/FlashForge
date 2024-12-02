@@ -1,91 +1,90 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz and Flashcard Generator</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  </head>
-  <body>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Quiz and Flashcard Generator</h1>
 
     <div id="sidebar" class="sidebar">
-      <h3>History</h3>
-      <div id="quiz-history">
-        <h4>Quizzes</h4>
-        <ul id="quiz-list"></ul>
-      </div>
-      <div id="flashcard-history">
-        <h4>Flashcards</h4>
-        <ul id="flashcard-list"></ul>
-      </div>
+        <h3>History</h3>
+        <div id="quiz-history">
+            <h4>Quizzes</h4>
+            <ul id="quiz-list"></ul>
+        </div>
+        <div id="flashcard-history">
+            <h4>Flashcards</h4>
+            <ul id="flashcard-list"></ul>
+        </div>
     </div>
 
     <div id="overlay" class="overlay"></div>
 
     <div id="main-content">
-      <button id="toggle-sidebar" class="toggle-btn">
-        <i class="fas fa-chevron-right"></i>
-      </button>
+        <button id="toggle-sidebar" class="toggle-btn">
+            <i class="fas fa-chevron-right">></i>
+        </button>
 
-      <div id="user-info">
-        <span id="welcome-message"></span>
-        <button id="logout-btn" onclick="logout()">Logout</button>
-      </div>
-
-      <div class="container">
-        <div id="main-form">
-          <div class="input-container">
-            <input type="file" id="image-upload" accept="image/*" />
-            <label for="image-upload" class="file-upload-label">Upload Image</label>
-          </div>
-          <div class="input-container">
-            <input type="text" id="topic" class="text-input" placeholder="Enter Topic (optional)" />
-          </div>
-          <div class="input-container">
-            <input type="number" id="number" class="number-input" placeholder="Enter the Number of Quiz or Flash Card" />
-          </div>
-          <div class="button-container">
-            <button class="option-button" onclick="generateContent('flashcards')">Create FlashCard</button>
-            <button class="option-button" onclick="generateContent('quiz')">Create Quiz</button>
-          </div>
-        </div>
+        <div id="user-info">
+            <span id="welcome-message"></span>
+            <button id="logout-btn" onclick="logout()">Logout</button>
         </div>
 
-        <div id="question-container" class="question-container">
-          <h2 id="quiz-title"></h2>
-          <form id="question-form">
-            <div id="question"></div>
-            <div id="options"></div>
-            <button type="button" id="previous-btn" class="option-button">
-              Previous
-            </button>
-            <button type="submit" class="option-button">Next</button>
-          </form>
-        </div>
+        <div class="container">
+            <div id="main-form">
+                <div class="input-container">
+                    <input type="text" id="topic" class="topic-input" placeholder="Enter Topic (optional)">
+                </div>
+                <div class="input-container">
+                    <input type="number" id="number" class="number-input" placeholder="Enter the Number of Quiz or Flash Card">
+                </div>
+                <div class="button-container">
+                    <button class="option-button" onclick="generateContent('flashcards')">Create FlashCard</button>
+                    <button class="option-button" onclick="generateContent('quiz')">Create Quiz</button>
+                </div>
+                <div class="input-container">
+                    <input type="file" id="image-upload" accept="image/*">
+                    <label for="image-upload" class="file-upload-label">Upload Image</label>
+                </div>
+            </div>
 
-        <div id="flashcard-container" class="flashcard-container">
-          <h2 id="flashcard-title"></h2>
-          <div id="flashcards"></div>
-          <button onclick="restartFlashcards()" class="option-button">
-            Restart Flashcards
-          </button>
-        </div>
+            <div id="question-container" class="question-container">
+                <h2 id="quiz-title"></h2>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front" id="question"></div>
+                        <div class="flashcard-back" id="answer"></div>
+                    </div>
+                </div>
+                <form id="question-form">
+                    <div id="options"></div>
+                    <button type="button" id="previous-btn" class="option-button">Previous</button>
+                    <button type="submit" class="option-button">Next</button>
+                </form>
+            </div>
 
-        <div id="score-container" class="score-container">
-          <h2>Quiz Completed!</h2>
-          <p id="score"></p>
-          <button onclick="restartQuiz()" class="option-button">
-            Restart Quiz
-          </button>
+            <div id="flashcard-container" class="flashcard-container">
+                <h2 id="flashcard-title"></h2>
+                <div id="flashcards"></div>
+                <button onclick="restartFlashcards()" class="option-button">Restart Flashcards</button>
+            </div>
+
+            <div id="score-container" class="score-container">
+                <h2>Quiz Completed!</h2>
+                <p id="score"></p>
+                <button onclick="restartQuiz()" class="option-button">Restart Quiz</button>
+            </div>
         </div>
-      </div>
     </div>
 
     <div id="loading-screen" class="loading-screen">
-      <div class="spinner"></div>
-      <p>Generating content...</p>
+        <div class="spinner"></div>
+        <p>Generating content...</p>
     </div>
 
     <script src="scripts.js"></script>
-  </body>
+</body>
 </html>
